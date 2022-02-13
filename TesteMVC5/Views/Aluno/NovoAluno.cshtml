@@ -4,6 +4,8 @@
 
 @using (Html.BeginForm())
 {
+    @Html.AntiForgeryToken()
+
 <div class="form-horizontal">
     <h4>Informe os dados do Aluno:</h4>
     <hr />
