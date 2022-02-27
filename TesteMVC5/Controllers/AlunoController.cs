@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using TesteMVC5.Data;
 using TesteMVC5.Models;
@@ -35,6 +36,49 @@ namespace TesteMVC5.Controllers
             // algumas regras de negocio + salvar no banco
 
             return View(aluno);
+        }
+
+        [HttpGet]
+        [Route("obter-alunos")]
+        public ActionResult ObterAlunos()
+        {
+            var alunos = context.Alunos.ToList();
+
+            return View("NovoAluno", alunos.FirstOrDefault());
+        }
+
+        [HttpGet]
+        [Route("editar-aluno")]
+        public ActionResult EditarAluno()
+        {
+            var aluno = context.Alunos.FirstOrDefault(a => a.Nome == "Maria");
+
+            //recupera os dados
+            aluno.Nome = "João";
+            var entry = context.Entry(aluno);
+            context.Set<Aluno>().Attach(aluno);
+            entry.State = System.Data.Entity.EntityState.Modified;
+
+            context.SaveChanges();
+
+            var alunonovo = context.Alunos.Find(aluno.Id);
+
+            return View("NovoAluno", alunonovo);
+        }
+
+        [HttpGet]
+        [Route("excluir-aluno")]
+        public ActionResult ExcluirAluno()
+        {
+            var aluno = context.Alunos.FirstOrDefault(a => a.Nome == "João");
+
+
+            context.Alunos.Remove(aluno);
+            context.SaveChanges();
+
+            var alunos = context.Alunos.ToList();
+
+            return View("NovoAluno", alunos.FirstOrDefault());
         }
     }
 }
